@@ -61,21 +61,26 @@ impl Grid {
         }
     }
 
-    pub fn display(&self) {
-        let max_width = self.cells.iter().map(|cell| cell.x.to_string().len()).max().unwrap_or(0);
-        let max_height = self.cells.iter().map(|cell| cell.y.to_string().len()).max().unwrap_or(0);
+    pub fn populate_random(&mut self) {
+        use rand::Rng;
+        let mut rng = rand::thread_rng();
+        for cell in self.cells.iter_mut() {
+            cell.filled = rng.gen_bool(0.5);
+        }
+    }
 
-        for x in 0..self.rows {
-            for y in 0..self.columns {
-                if let Some(cell) = self.get(x, y) {
-                    let x_padding = " ".repeat(max_width - cell.x.to_string().len());
-                    let y_padding = " ".repeat(max_height - cell.y.to_string().len());
-                    if cell.filled {
-                        print!("{}", Black.on(White).paint(format!("{}{} ", x_padding, " ")).to_string());
-                    } else {
-                        print!("{}", White.on(Black).paint(format!("{}{} ", y_padding, " ")).to_string());
-                    }
-                }
+    pub fn display(&self) {
+        for row in 0..self.rows {
+            for col in 0..self.columns {
+                let cell = self.get(row, col).unwrap(); // Safe to unwrap since we're within the grid dimensions.
+
+                let cell_display = if cell.filled {
+                    Black.on(White).paint("  ").to_string()
+                } else {
+                    White.on(Black).paint("  ").to_string()
+                };
+
+                print!("{}", cell_display);
             }
             println!();
         }
