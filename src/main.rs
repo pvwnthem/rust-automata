@@ -12,13 +12,10 @@ fn main() {
 
 
     loop {
+        std::process::Command::new("clear").status().unwrap();
         auto.display();
-        // sleep for 1 second
         std::thread::sleep(std::time::Duration::from_millis(100));
-        // clear the screen
-        
         auto.next();
     }
-    
     
 }
