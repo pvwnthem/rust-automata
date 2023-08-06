@@ -1,6 +1,6 @@
 use ansi_term::Colour::{Black, White};
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Cell {
     pub x: usize,
     pub y: usize,
@@ -21,7 +21,7 @@ impl Cell {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Grid {
     pub cells: Vec<Cell>,
     pub rows: usize,
@@ -51,10 +51,10 @@ impl Grid {
         self.cells.get_mut(x * self.columns + y)
     }
 
-    pub fn toggle(&mut self, cell: &Cell) -> Option<&Cell> {
+    pub fn toggle(&mut self, cell: &Cell, on: bool) -> Option<&Cell> {
         let (x, y) = (cell.x, cell.y);
         if let Some(cell) = self.get_mut(x, y) {
-            cell.toggle();
+            cell.filled = on;
             self.get(x, y)
         } else {
             None
@@ -68,6 +68,35 @@ impl Grid {
             cell.filled = rng.gen_bool(0.5);
         }
     }
+
+    pub fn neighbors(&self, cell: &Cell) -> Vec<&Cell> {
+        let mut neighbors = Vec::new();
+        let (x, y) = (cell.x as isize, cell.y as isize);
+        let rows: isize = self.rows as isize;
+        let columns: isize = self.columns as isize;
+    
+        for dx in -1..=1 {
+            for dy in -1..=1 {
+                if dx == 0 && dy == 0 {
+                    continue;
+                }
+    
+                let nx = (x + dx).clamp(0, rows - 1);
+                let ny = (y + dy).clamp(0, columns - 1);
+    
+                // Borrow the grid temporarily to get the neighbor
+                if let Some(neighbor) = self.get(nx as usize, ny as usize) {
+                    neighbors.push(neighbor);
+                }
+            }
+        }
+    
+        neighbors
+    }
+    
+    
+    
+    
 
     pub fn display(&self) {
         for row in 0..self.rows {
