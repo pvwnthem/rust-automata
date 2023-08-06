@@ -24,7 +24,7 @@ fn main() {
 
     #[wasm_bindgen]
     pub fn greet() {
-        alert("Hello, rust-automata!");
+        alert("Hello, wasm-game-of-life!");
     }
 
 }

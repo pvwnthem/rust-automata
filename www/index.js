@@ -1,3 +1,3 @@
-import * as wasm from "rust-automata";
+import * as wasm from "hello-wasm-pack";
 
 wasm.greet();
